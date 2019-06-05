@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".view.MainActivity">
 
     <com.warkiz.widget.IndicatorSeekBar
             android:id="@+id/salarySeekBar"
@@ -16,6 +16,7 @@
             app:isb_progress="1"
             app:isb_seek_smoothly="true"
             app:isb_thumb_color="@color/colorSBThumb"
+            app:isb_tick_texts_array="@array/salary_sb_ticks"
             app:isb_thumb_size="20dp"
             app:isb_show_indicator="rounded_rectangle"
             app:isb_indicator_color="@color/colorSBThumb"
@@ -63,6 +64,7 @@
             app:isb_indicator_text_size="18sp"
             app:isb_ticks_count="2"
             app:isb_show_tick_texts="true"
+            app:isb_tick_texts_array="@array/time_sb_ticks"
             app:isb_track_background_color="@color/colorSBThumb"
             app:isb_track_background_size="2dp"
             app:isb_track_progress_color="@color/colorSBThumb"

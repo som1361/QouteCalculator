@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="salary_sb_ticks">
+        <item>$2000</item>
+        <item>$15000</item>
+    </array>
+
+    <array name="time_sb_ticks">
+        <item>3 months</item>
+        <item>36 months</item>
+    </array>
+</resources>
