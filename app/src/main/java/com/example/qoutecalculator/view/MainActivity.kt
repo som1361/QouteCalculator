@@ -1,39 +1,64 @@
 package com.example.qoutecalculator.view
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import com.example.qoutecalculator.R
+import com.example.qoutecalculator.viewmodel.MainViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.authentication_dialog.*
+import kotlinx.android.synthetic.main.authentication_dialog.view.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mMainViewModel: MainViewModel
+    private var mAuth: FirebaseAuth? = null
+    private var currentUser: FirebaseUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mMainViewModel = MainViewModel()
+        mAuth = FirebaseAuth.getInstance()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loadView()
         respondToClicks()
     }
 
+    override fun onStart() {
+        super.onStart()
+        currentUser = mAuth?.currentUser
+    }
+
     private fun respondToClicks() {
-      calcQouteButton.setOnClickListener { showAuthenticationDialog() }
+        calcQouteButton.setOnClickListener{
+            currentUser.let { if (it != null) goToQoutePage() else showAuthenticationDialog() }
+        }
+    }
+
+    private fun goToQoutePage() {
+
     }
 
     private fun showAuthenticationDialog() {
-val mAuthDialog = LayoutInflater.from(this).inflate(R.layout.authentication_dialog, null)
+        val mAuthDialogView = LayoutInflater.from(this).inflate(R.layout.authentication_dialog, null)
         val mBuilder = AlertDialog.Builder(this)
-            .setView(mAuthDialog)
-        val mAlertDialog = mBuilder.show()
+            .setView(mAuthDialogView)
+        val mAuthDialog = mBuilder.show()
 
-        application_btn.setOnClickListener {
+        mAuthDialogView.login_btn.setOnClickListener {
+            mAuthDialog.dismiss()
+            mMainViewModel.loginUser()
 
         }
 
-        login_btn.setOnClickListener {
-            
+        mAuthDialogView.application_btn.setOnClickListener {
+            mAuthDialog.dismiss()
+            mMainViewModel.registerUser();
+
         }
+
+
     }
 
     private fun loadView() {
