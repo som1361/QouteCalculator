@@ -1,4 +1,4 @@
-package com.example.qoutecalculator.domain.repository
+package com.example.qoutecalculator.repository
 
 import io.reactivex.Completable
 

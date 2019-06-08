@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         mAuthDialogView.login_btn.setOnClickListener {
             mAuthDialog.dismiss()
-            mMainViewModel.loginUser()
+            mMainViewModel.authenticateUser()
 
         }
 

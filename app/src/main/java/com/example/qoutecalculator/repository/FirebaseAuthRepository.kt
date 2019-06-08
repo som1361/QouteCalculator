@@ -1,5 +1,6 @@
-package com.example.qoutecalculator.domain.repository
+package com.example.qoutecalculator.repository
 
+import com.example.qoutecalculator.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
 
