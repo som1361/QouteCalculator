@@ -24,14 +24,14 @@ class UserDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
     }
 
-    fun addUser(user: User) {
+    fun addUser(user: User): Long {
         val db = this.writableDatabase
         var contentValues = ContentValues()
         contentValues.put(COL_NAME, user.name)
         contentValues.put(COL_PHONE, user.phone)
         contentValues.put(COL_EMAIL, user.email)
 
-        db.insert(TABLE_NAME, null, contentValues)
+        return db.insert(TABLE_NAME, null, contentValues)
     }
 
 
@@ -45,20 +45,17 @@ class UserDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
         user.name = result.getString(result.getColumnIndex(COL_NAME))
         user.phone = result.getString(result.getColumnIndex(COL_PHONE))
         user.email = result.getString(result.getColumnIndex(COL_EMAIL))
-
-        result.close()
-        db.close()
         return user
     }
 
-    fun updateUser(user: User) {
+    fun updateUser(user: User): Int {
        val db = this.writableDatabase
         var contentValues = ContentValues()
         contentValues.put(COL_NAME, user.name)
         contentValues.put(COL_PHONE, user.phone)
         contentValues.put(COL_EMAIL, user.email)
 
-        db.update(TABLE_NAME, contentValues, null, null  )
+        return db.update(TABLE_NAME, contentValues, null, null  )
     }
 
 

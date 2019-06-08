@@ -2,13 +2,18 @@ package com.example.qoutecalculator.repository
 
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.model.UserDao
+import io.reactivex.Completable
+import io.reactivex.Single
+
 
 class UserDaoRepository(private val userDao: UserDao): UserRepository{
-    override fun getUser() = userDao.getUser()
 
-    override fun addUser(user:User)= userDao.addUser(user)
+    override fun getUser() : Single<User> = Single.fromCallable({userDao.getUser()})
 
-    override fun updateUser(user:User) = userDao.updateUser(user)
+    override fun addUser(user:User): Completable = Completable.fromCallable{userDao.addUser(user)}
+
+    override fun updateUser(user:User): Completable = Completable.fromCallable{userDao.updateUser(user)}
+
 
     companion object {
         @Volatile
