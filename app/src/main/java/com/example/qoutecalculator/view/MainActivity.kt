@@ -70,8 +70,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configSeekBar() {
-        salarySeekBar.setIndicatorTextFormat("$\${PROGRESS}")
-        timeSeekBar.setIndicatorTextFormat("\${PROGRESS} months")
+        amount_SeekBar.setIndicatorTextFormat("$\${PROGRESS}")
+        term_SeekBar.setIndicatorTextFormat("\${PROGRESS} months")
     }
 
 

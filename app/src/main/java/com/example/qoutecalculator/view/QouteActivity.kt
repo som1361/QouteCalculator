@@ -2,11 +2,9 @@ package com.example.qoutecalculator.view
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.qoutecalculator.R
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.model.UserDao
@@ -55,19 +53,19 @@ class QouteActivity : AppCompatActivity() {
     }
 
     private fun respondToClicks() {
-        info_edit_btn.setOnClickListener {
+        info_edit.setOnClickListener {
             name_editText.isEnabled = true
-            phone_editText.isEnabled = true
+            mobile_editText.isEnabled = true
             email_editText.isEnabled = true
           //  configInfoValidation()
         }
 
         apply_btn.setOnClickListener {
-            phone_editText.hideKeyboard()
+            mobile_editText.hideKeyboard()
             showProgressBar()
             val user = User(
                 name_editText.text.toString(),
-                phone_editText.text.toString(), email_editText.text.toString()
+                mobile_editText.text.toString(), email_editText.text.toString()
             )
             mMainViewModel.addUser(user)
         }
