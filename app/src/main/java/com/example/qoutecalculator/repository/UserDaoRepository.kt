@@ -14,6 +14,8 @@ class UserDaoRepository(private val userDao: UserDao): UserRepository{
 
     override fun updateUser(user:User): Completable = Completable.fromCallable{userDao.updateUser(user)}
 
+    override fun replaceUser(user:User): Completable = Completable.fromCallable{userDao.replaceUser(user)}
+
 
     companion object {
         @Volatile

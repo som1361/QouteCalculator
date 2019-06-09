@@ -34,13 +34,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun respondToClicks() {
         calcQouteButton.setOnClickListener {
-            //currentUser.let { if (it != null) goToQouteActivity() else showAuthenticationDialog() }
-            showAuthenticationDialog()
+            currentUser.let { if (it != null) goToQouteActivity() else showAuthenticationDialog() }
         }
     }
 
     private fun goToQouteActivity() {
+        val bundle = Bundle()
+        bundle.putInt(QouteActivity.Constants.NPER, term_SeekBar.progress)
+        bundle.putInt(QouteActivity.Constants.PV, amount_SeekBar.progress)
         val intent = Intent(this, QouteActivity::class.java)
+        intent.putExtras(bundle)
         startActivity(intent)
     }
 

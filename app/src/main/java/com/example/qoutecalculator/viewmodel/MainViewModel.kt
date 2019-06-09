@@ -19,6 +19,8 @@ class MainViewModel() {
     lateinit var getUserErrorObservable: PublishSubject<Exception>
     lateinit var addUserObservable: CompletableSubject
     lateinit var addUserErrorObservable: PublishSubject<Exception>
+    lateinit var replaceUserObservable: CompletableSubject
+    lateinit var replaceUserErrorObservable: PublishSubject<Exception>
     lateinit var updateUserObservable: CompletableSubject
     lateinit var updateUserErrorObservable: PublishSubject<Exception>
 
@@ -29,6 +31,8 @@ class MainViewModel() {
         getUserErrorObservable = PublishSubject.create()
         addUserObservable = CompletableSubject.create()
         addUserErrorObservable = PublishSubject.create()
+        replaceUserObservable = CompletableSubject.create()
+        replaceUserErrorObservable = PublishSubject.create()
         updateUserObservable = CompletableSubject.create()
         updateUserErrorObservable = PublishSubject.create()
     }
@@ -96,4 +100,21 @@ class MainViewModel() {
             })
         compositeDisposable.add(disposable)
     }
+
+    fun replaceUser(user: User) {
+        val disposable = userRepository.addUser(user)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableCompletableObserver() {
+                override fun onComplete() {
+                    replaceUserObservable.onComplete()
+                }
+
+                override fun onError(e: Throwable) {
+                    replaceUserErrorObservable.onNext(e as Exception)
+                }
+            })
+        compositeDisposable.add(disposable)
+    }
+
 }

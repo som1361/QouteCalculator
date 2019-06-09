@@ -10,4 +10,6 @@ interface UserRepository {
     fun addUser(user: User): Completable
 
     fun updateUser(user:User): Completable
+
+    fun replaceUser(user: User): Completable
 }

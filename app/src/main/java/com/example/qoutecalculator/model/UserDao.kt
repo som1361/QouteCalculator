@@ -58,6 +58,14 @@ class UserDao(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
         return db.update(TABLE_NAME, contentValues, null, null  )
     }
 
+    fun replaceUser(user: User): Long {
+        val db = this.writableDatabase
+        var contentValues = ContentValues()
+        contentValues.put(COL_NAME, user.name)
+        contentValues.put(COL_PHONE, user.phone)
+        contentValues.put(COL_EMAIL, user.email)
+        return db.replace(TABLE_NAME, null, contentValues)
+    }
 
 
 }
