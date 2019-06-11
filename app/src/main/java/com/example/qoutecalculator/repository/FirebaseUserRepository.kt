@@ -31,7 +31,7 @@ class FirebaseUserRepository : UserRepository {
     override fun saveUser(user: User): Completable = Completable.fromCallable {
         val dbRef = userDatabaseReference()
         dbRef.child("name").setValue(user.name)
-        dbRef.child("mobile").setValue(user.phone)
+        dbRef.child("mobile").setValue(user.mobile)
         dbRef.child("email").setValue(user.email)
     }
 

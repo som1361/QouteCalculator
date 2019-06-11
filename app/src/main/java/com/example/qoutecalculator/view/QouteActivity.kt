@@ -53,7 +53,7 @@ class QouteActivity : AppCompatActivity() {
 
     private fun showUserInfo(user: User) {
         name_editText.setText(user.name)
-        mobile_editText.setText(user.phone)
+        mobile_editText.setText(user.mobile)
         email_editText.setText(user.email)
         name_editText.isEnabled = false
         mobile_editText.isEnabled = false
