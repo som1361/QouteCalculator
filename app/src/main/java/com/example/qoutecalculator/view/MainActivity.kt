@@ -34,12 +34,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun respondToClicks() {
         calcQouteButton.setOnClickListener {
-            currentUser.let { if (it != null) goToQouteActivity() else showAuthenticationDialog() }
+            currentUser.let {
+                if (it == null || it!!.isAnonymous)
+                    showAuthenticationDialog()
+                else
+                    goToQouteActivity(true)
+            }
         }
     }
 
-    private fun goToQouteActivity() {
+    private fun goToQouteActivity(isAuthenticated: Boolean) {
         val bundle = Bundle()
+        bundle.putBoolean(QouteActivity.Constants.AUTH, isAuthenticated)
         bundle.putInt(QouteActivity.Constants.NPER, term_SeekBar.progress)
         bundle.putInt(QouteActivity.Constants.PV, amount_SeekBar.progress)
         val intent = Intent(this, QouteActivity::class.java)
@@ -55,13 +61,13 @@ class MainActivity : AppCompatActivity() {
 
         mAuthDialogView.login_btn.setOnClickListener {
             mAuthDialog.dismiss()
-            mMainViewModel.authenticateUser()
+            // mMainViewModel.authenticateUser()
 
         }
 
         mAuthDialogView.application_btn.setOnClickListener {
             mAuthDialog.dismiss()
-            goToQouteActivity()
+            goToQouteActivity(false)
         }
 
 

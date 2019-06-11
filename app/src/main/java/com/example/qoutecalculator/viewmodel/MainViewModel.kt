@@ -5,6 +5,7 @@ import com.example.qoutecalculator.repository.AuthRepository
 import com.example.qoutecalculator.repository.UserRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -17,53 +18,44 @@ class MainViewModel() {
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
     lateinit var getUserObservable: PublishSubject<User>
     lateinit var getUserErrorObservable: PublishSubject<Exception>
-    lateinit var addUserObservable: CompletableSubject
-    lateinit var addUserErrorObservable: PublishSubject<Exception>
-    lateinit var replaceUserObservable: CompletableSubject
-    lateinit var replaceUserErrorObservable: PublishSubject<Exception>
-    lateinit var updateUserObservable: CompletableSubject
-    lateinit var updateUserErrorObservable: PublishSubject<Exception>
+    lateinit var saveUserObservable: CompletableSubject
+    lateinit var saveUserErrorObservable: PublishSubject<Exception>
 
     constructor(mAuthRepository: AuthRepository, mUserRepository: UserRepository) : this() {
         authRepository = mAuthRepository
         userRepository = mUserRepository
         getUserObservable = PublishSubject.create()
         getUserErrorObservable = PublishSubject.create()
-        addUserObservable = CompletableSubject.create()
-        addUserErrorObservable = PublishSubject.create()
-        replaceUserObservable = CompletableSubject.create()
-        replaceUserErrorObservable = PublishSubject.create()
-        updateUserObservable = CompletableSubject.create()
-        updateUserErrorObservable = PublishSubject.create()
+        saveUserObservable = CompletableSubject.create()
+        saveUserErrorObservable = PublishSubject.create()
     }
 
-    fun authenticateUser() {
-        val user = getUser()
-//        val disposable: Disposable = firebaseAuthRepository.login()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribeWith(object : DisposableCompletableObserver() {
-//                override fun onComplete() {
-//                }
-//
-//                override fun onError(e: Throwable) {
-//                    resultErrorObservable.onError(e as AuthenticatorException)
-//                }
-//            })
-//        compositeDisposable.add(disposable)
-    }
-
-    fun addUser(user: User) {
-        val disposable = userRepository.addUser(user)
+    fun createUser(user: User) {
+        val disposable = authRepository.login()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableCompletableObserver() {
                 override fun onComplete() {
-                    addUserObservable.onComplete()
+                    saveUser(user)
                 }
 
                 override fun onError(e: Throwable) {
-                    addUserErrorObservable.onNext(e as Exception)
+                }
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    fun saveUser(user: User) {
+        val disposable = userRepository.saveUser(user)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableCompletableObserver() {
+                override fun onComplete() {
+                    saveUserObservable.onComplete()
+                }
+
+                override fun onError(e: Throwable) {
+                    saveUserErrorObservable.onNext(e as Exception)
                 }
             })
         compositeDisposable.add(disposable)
@@ -85,36 +77,8 @@ class MainViewModel() {
         compositeDisposable.add(disposable)
     }
 
-    fun updateUser(user: User) {
-        val disposable = userRepository.updateUser(user)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableCompletableObserver() {
-                override fun onComplete() {
-                    updateUserObservable.onComplete()
-                }
-
-                override fun onError(e: Throwable) {
-                    addUserErrorObservable.onNext(e as Exception)
-                }
-            })
-        compositeDisposable.add(disposable)
-    }
-
-    fun replaceUser(user: User) {
-        val disposable = userRepository.addUser(user)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableCompletableObserver() {
-                override fun onComplete() {
-                    replaceUserObservable.onComplete()
-                }
-
-                override fun onError(e: Throwable) {
-                    replaceUserErrorObservable.onNext(e as Exception)
-                }
-            })
-        compositeDisposable.add(disposable)
+    fun cancelNetworkConnections() {
+        compositeDisposable.clear()
     }
 
 }

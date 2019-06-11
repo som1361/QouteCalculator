@@ -29,6 +29,7 @@
     <TextView
             android:text="Edit"
             android:textColor="#000000"
+            android:background="?attr/selectableItemBackground"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +53,6 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:background="@android:color/transparent"
-            android:enabled="false"
             android:ems="10"
             android:id="@+id/name_editText"
             app:layout_constraintBaseline_toBaselineOf="@+id/name_lable" android:layout_marginEnd="16dp"
@@ -73,7 +73,6 @@
             android:textColor="#000000"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:enabled="false"
             android:inputType="phone"
             android:ems="10"
             android:id="@+id/mobile_editText"
@@ -96,7 +95,6 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:background="@android:color/transparent"
-            android:enabled="false"
             android:ems="10"
             android:id="@+id/email_editText"
             app:layout_constraintBaseline_toBaselineOf="@+id/email_lable" android:layout_marginEnd="16dp"
@@ -114,6 +112,7 @@
             android:textSize="18sp"/>
     <TextView
             android:text="Edit"
+            android:background="?attr/selectableItemBackground"
             android:textColor="#000000"
             android:textStyle="bold"
             android:layout_width="wrap_content"

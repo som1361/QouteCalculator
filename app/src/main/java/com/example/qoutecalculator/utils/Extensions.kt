@@ -1,8 +1,14 @@
 package com.example.qoutecalculator.utils
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import com.example.qoutecalculator.model.User
+import com.google.firebase.database.DataSnapshot
 
 fun View.hideKeyboard(): Boolean {
     try {
@@ -11,3 +17,9 @@ fun View.hideKeyboard(): Boolean {
     } catch (ignored: RuntimeException) { }
     return false
 }
+
+fun DataSnapshot.toUser(): User =
+    User(this.child("name")as String, this.child("mobile")as String, this.child("email")as String )
+
+fun String.isValidEmail(): Boolean
+        = this.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
