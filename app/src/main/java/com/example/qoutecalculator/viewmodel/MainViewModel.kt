@@ -3,6 +3,7 @@ package com.example.qoutecalculator.viewmodel
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.AuthRepository
 import com.example.qoutecalculator.repository.UserRepository
+import com.example.qoutecalculator.utils.PMTPayment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -79,6 +80,10 @@ class MainViewModel() {
 
     fun cancelNetworkConnections() {
         compositeDisposable.clear()
+    }
+
+    fun calculatePayment(pv: Double, nper: Double, annualrate: Double): CharSequence? {
+        return PMTPayment().calculate(pv, nper, annualrate)
     }
 
 }
