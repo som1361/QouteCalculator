@@ -21,6 +21,8 @@ class MainViewModel() {
     lateinit var getUserErrorObservable: PublishSubject<Exception>
     lateinit var saveUserObservable: CompletableSubject
     lateinit var saveUserErrorObservable: PublishSubject<Exception>
+    lateinit var authUserObservable: CompletableSubject
+    lateinit var authUserErrorObservable: PublishSubject<Exception>
 
     constructor(mAuthRepository: AuthRepository, mUserRepository: UserRepository) : this() {
         authRepository = mAuthRepository
@@ -29,6 +31,8 @@ class MainViewModel() {
         getUserErrorObservable = PublishSubject.create()
         saveUserObservable = CompletableSubject.create()
         saveUserErrorObservable = PublishSubject.create()
+        authUserObservable = CompletableSubject.create()
+        authUserErrorObservable = PublishSubject.create()
     }
 
     fun createUser(user: User) {
@@ -41,6 +45,7 @@ class MainViewModel() {
                 }
 
                 override fun onError(e: Throwable) {
+                    saveUserErrorObservable.onNext(e as Exception)
                 }
             })
         compositeDisposable.add(disposable)
@@ -78,6 +83,8 @@ class MainViewModel() {
         compositeDisposable.add(disposable)
     }
 
+
+
     fun cancelNetworkConnections() {
         compositeDisposable.clear()
     }
@@ -85,5 +92,20 @@ class MainViewModel() {
     fun calculatePayment(pv: Double, nper: Double, annualrate: Double): CharSequence? {
         return PMTPayment().calculate(pv, nper, annualrate)
     }
+
+    fun <T> authenticateUser(account: T?) {
+        val disposable = authRepository.authenticate(account)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableCompletableObserver() {
+                override fun onComplete() {
+                  authUserObservable.onComplete()
+                }
+
+                override fun onError(e: Throwable) {
+                    authUserErrorObservable.onNext(e as Exception)
+                }
+            })
+        compositeDisposable.add(disposable)    }
 
 }

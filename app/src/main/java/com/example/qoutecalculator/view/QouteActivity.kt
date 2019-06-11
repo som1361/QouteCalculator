@@ -28,7 +28,7 @@ class QouteActivity : AppCompatActivity() {
     private fun listenToObservables() {
         mMainViewModel.saveUserObservable.subscribe({
             hideProgressBar()
-            val toast = Toast.makeText(this, "Your Application is successful.", Toast.LENGTH_LONG)
+            val toast = Toast.makeText(this, R.string.app_success, Toast.LENGTH_LONG)
             toast.view.setBackgroundColor(Color.GRAY)
             toast.show()
 //            val mBuilder = AlertDialog.Builder(this).setMessage("Your Application is successful.")
@@ -37,7 +37,7 @@ class QouteActivity : AppCompatActivity() {
 
         mMainViewModel.saveUserErrorObservable.subscribe({
             hideProgressBar()
-            val toast = Toast.makeText(this, "Your Application is failed.", Toast.LENGTH_LONG)
+            val toast = Toast.makeText(this, R.string.app_failed, Toast.LENGTH_LONG)
             toast.view.setBackgroundColor(Color.RED)
             toast.show()
         })
@@ -47,6 +47,13 @@ class QouteActivity : AppCompatActivity() {
             if (it != null) {
                 showUserInfo(it)
             }
+        })
+
+        mMainViewModel.getUserErrorObservable.subscribe({
+            hideProgressBar()
+            val toast = Toast.makeText(this, R.string.get_user_failed, Toast.LENGTH_LONG)
+            toast.view.setBackgroundColor(Color.RED)
+            toast.show()
         })
     }
 

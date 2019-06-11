@@ -1,12 +1,20 @@
 package com.example.qoutecalculator.view
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.widget.Toast
 import com.example.qoutecalculator.R
 import com.example.qoutecalculator.viewmodel.MainViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -17,6 +25,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
     private var mAuth: FirebaseAuth? = null
     private var currentUser: FirebaseUser? = null
+
+    val GOOGLE_SIGN_IN: Int = 1
+    lateinit var mGoogleSignInClient: GoogleSignInClient
+    lateinit var mGoogleSignInOptions: GoogleSignInOptions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mMainViewModel = MainViewModel()
@@ -37,10 +49,22 @@ class MainActivity : AppCompatActivity() {
             currentUser.let {
                 if (it == null || it!!.isAnonymous) {
                     calcQouteButton.setText(R.string.apply_now)
+                    listenToObservables()
                     showAuthenticationDialog()
                 } else
                     goToQouteActivity(true)
             }
+        }
+    }
+
+    private fun listenToObservables() {
+        mMainViewModel.authUserObservable.subscribe {
+            goToQouteActivity(true)
+        }
+        mMainViewModel.authUserErrorObservable.subscribe {
+            val toast = Toast.makeText(this, R.string.auth_user_failed, Toast.LENGTH_LONG)
+            toast.view.setBackgroundColor(Color.RED)
+            toast.show()
         }
     }
 
@@ -62,8 +86,8 @@ class MainActivity : AppCompatActivity() {
 
         mAuthDialogView.login_btn.setOnClickListener {
             mAuthDialog.dismiss()
-            // mMainViewModel.authenticateUser()
-
+            configureGoogleSignIn()
+            signIn()
         }
 
         mAuthDialogView.application_btn.setOnClickListener {
@@ -72,6 +96,20 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun signIn() {
+        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_SIGN_IN) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            val account = task.getResult(ApiException::class.java)
+            mMainViewModel.authenticateUser(account)
+        }
     }
 
     private fun loadView() {
@@ -84,6 +122,12 @@ class MainActivity : AppCompatActivity() {
         term_SeekBar.setIndicatorTextFormat("\${PROGRESS} months")
     }
 
-
+    private fun configureGoogleSignIn() {
+        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        mGoogleSignInClient = GoogleSignIn.getClient(this, mGoogleSignInOptions)
+    }
 }
 

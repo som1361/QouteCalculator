@@ -2,4 +2,8 @@
     <string name="app_name">QouteCalculator</string>
     <string  name="interest_rate">3.7</string>
     <string  name="apply_now">Apply Now</string>
+    <string name="app_success">Your Application is Successful.</string>
+    <string name="app_failed">Your Application is failed.</string>
+    <string name="get_user_failed">Error in reading user data</string>
+    <string name="auth_user_failed">User authentication failed.</string>
 </resources>

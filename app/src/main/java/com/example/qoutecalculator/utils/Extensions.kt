@@ -20,6 +20,3 @@ fun View.hideKeyboard(): Boolean {
 
 fun DataSnapshot.toUser(): User =
     User(this.child("name")as String, this.child("mobile")as String, this.child("email")as String )
-
-fun String.isValidEmail(): Boolean
-        = this.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
