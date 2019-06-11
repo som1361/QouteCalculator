@@ -9,7 +9,6 @@ import com.example.qoutecalculator.R
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
 import com.example.qoutecalculator.repository.FirebaseUserRepository
-import com.example.qoutecalculator.utils.PMTPayment
 import com.example.qoutecalculator.utils.hideKeyboard
 import com.example.qoutecalculator.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_qoute.*
@@ -30,7 +29,7 @@ class QouteActivity : AppCompatActivity() {
         mMainViewModel.saveUserObservable.subscribe({
             hideProgressBar()
             val toast = Toast.makeText(this, "Your Application is successful.", Toast.LENGTH_LONG)
-            toast.view.setBackgroundColor(Color.GREEN)
+            toast.view.setBackgroundColor(Color.GRAY)
             toast.show()
 //            val mBuilder = AlertDialog.Builder(this).setMessage("Your Application is successful.")
 //            mBuilder.show()
@@ -97,8 +96,8 @@ class QouteActivity : AppCompatActivity() {
         val nper = bundle.getInt(Constants.NPER)
         val pv = bundle.getInt(Constants.PV)
         isAuth = bundle.getBoolean(Constants.AUTH)
-      //  if (isAuth)
-            getUserInfo()
+        //  if (isAuth)
+        getUserInfo()
         showPaymentDetails(nper, pv)
     }
 
@@ -110,8 +109,10 @@ class QouteActivity : AppCompatActivity() {
     private fun showPaymentDetails(nper: Int, pv: Int) {
         term_textview.text = "${nper.toString()} months"
         amount_textview.text = "$${pv.toString()}"
-        val rate = R.string.interest_rate.toDouble()
-        repayment_textview.text = PMTPayment().calculate(pv.toDouble(), nper.toDouble(), rate)
+        repayment_textview.text = mMainViewModel.calculatePayment(
+            pv.toDouble(),
+            nper.toDouble(),
+        Constants.RATE)
     }
 
     override fun onStop() {
@@ -123,5 +124,6 @@ class QouteActivity : AppCompatActivity() {
         const val AUTH = "auth"
         const val NPER = "nper"
         const val PV = "pv"
+        const val RATE = 3.7
     }
 }

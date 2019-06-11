@@ -35,9 +35,10 @@ class MainActivity : AppCompatActivity() {
     private fun respondToClicks() {
         calcQouteButton.setOnClickListener {
             currentUser.let {
-                if (it == null || it!!.isAnonymous)
+                if (it == null || it!!.isAnonymous) {
+                    calcQouteButton.setText(R.string.apply_now)
                     showAuthenticationDialog()
-                else
+                } else
                     goToQouteActivity(true)
             }
         }
