@@ -4,8 +4,6 @@ import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.AuthRepository
 import com.example.qoutecalculator.repository.UserRepository
 import com.example.qoutecalculator.utils.PMTPayment
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableCompletableObserver
@@ -97,9 +95,9 @@ class MainViewModel() {
         val disposable = authRepository.authenticate(account)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableCompletableObserver() {
-                override fun onComplete() {
-                    //authUserObservable.onComplete()
+            .subscribeWith(object : DisposableSingleObserver<User>() {
+                override fun onSuccess(user: User) {
+                    saveUser(user)
                 }
 
                 override fun onError(e: Throwable) {

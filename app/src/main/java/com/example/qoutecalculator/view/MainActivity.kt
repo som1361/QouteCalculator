@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.authentication_dialog.view.*
-import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
     private var userState: Int = 0
@@ -69,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun listenToObservables() {
         mMainViewModel.authUserObservable.subscribe {
+            userState = QouteActivity.Constants.AUTHENTICATED_USER
             goToQouteActivity()
         }
         mMainViewModel.authUserErrorObservable.subscribe {
@@ -76,6 +76,19 @@ class MainActivity : AppCompatActivity() {
             toast.view.setBackgroundColor(Color.RED)
             toast.show()
         }
+
+        mMainViewModel.saveUserObservable.subscribe({
+            userState = QouteActivity.Constants.AUTHENTICATED_USER
+            goToQouteActivity()
+        })
+
+        mMainViewModel.saveUserErrorObservable.subscribe({
+            val toast = Toast.makeText(this, R.string.save_auth_user_failed, Toast.LENGTH_LONG)
+            toast.view.setBackgroundColor(Color.RED)
+            toast.show()
+        })
+
+
     }
 
     private fun goToQouteActivity() {
@@ -118,7 +131,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == GOOGLE_SIGN_IN && resultCode == Activity.RESULT_OK) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             val account = task.getResult(ApiException::class.java)
-            Logger.getLogger(MainActivity::class.java.name).warning("done")
             mMainViewModel.authenticateUser(account)
         }
     }
