@@ -4,9 +4,10 @@ import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.AuthRepository
 import com.example.qoutecalculator.repository.UserRepository
 import com.example.qoutecalculator.utils.PMTPayment
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableCompletableObserver
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
@@ -25,14 +26,14 @@ class MainViewModel() {
     lateinit var authUserErrorObservable: PublishSubject<Exception>
 
     constructor(mAuthRepository: AuthRepository, mUserRepository: UserRepository) : this() {
+        authUserObservable = CompletableSubject.create()
+        authUserErrorObservable = PublishSubject.create()
         authRepository = mAuthRepository
         userRepository = mUserRepository
         getUserObservable = PublishSubject.create()
         getUserErrorObservable = PublishSubject.create()
         saveUserObservable = CompletableSubject.create()
         saveUserErrorObservable = PublishSubject.create()
-        authUserObservable = CompletableSubject.create()
-        authUserErrorObservable = PublishSubject.create()
     }
 
     fun createUser(user: User) {
@@ -84,7 +85,6 @@ class MainViewModel() {
     }
 
 
-
     fun cancelNetworkConnections() {
         compositeDisposable.clear()
     }
@@ -99,13 +99,14 @@ class MainViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableCompletableObserver() {
                 override fun onComplete() {
-                  authUserObservable.onComplete()
+                    //authUserObservable.onComplete()
                 }
 
                 override fun onError(e: Throwable) {
                     authUserErrorObservable.onNext(e as Exception)
                 }
             })
-        compositeDisposable.add(disposable)    }
+        compositeDisposable.add(disposable)
+    }
 
 }

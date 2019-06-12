@@ -1,5 +1,6 @@
 package com.example.qoutecalculator.view
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.Toast
 import com.example.qoutecalculator.R
+import com.example.qoutecalculator.repository.FirebaseAuthRepository
+import com.example.qoutecalculator.repository.FirebaseUserRepository
 import com.example.qoutecalculator.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,8 +23,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.authentication_dialog.view.*
+import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
+    private var userState: Int = 0
     private lateinit var mMainViewModel: MainViewModel
     private var mAuth: FirebaseAuth? = null
     private var currentUser: FirebaseUser? = null
@@ -31,10 +36,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel()
+        mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
+
         FirebaseApp.initializeApp(this)
         super.onCreate(savedInstanceState)
         loadView()
+        listenToObservables()
         respondToClicks()
     }
 
@@ -48,18 +55,21 @@ class MainActivity : AppCompatActivity() {
         calcQouteButton.setOnClickListener {
             currentUser.let {
                 if (it == null || it!!.isAnonymous) {
+                    if (it == null) userState = QouteActivity.Constants.NEW_USER
+                    else userState = QouteActivity.Constants.ANONYMOUS_USER
                     calcQouteButton.setText(R.string.apply_now)
-                    listenToObservables()
                     showAuthenticationDialog()
-                } else
-                    goToQouteActivity(true)
+                } else {
+                    userState = QouteActivity.Constants.AUTHENTICATED_USER
+                    goToQouteActivity()
+                }
             }
         }
     }
 
     private fun listenToObservables() {
         mMainViewModel.authUserObservable.subscribe {
-            goToQouteActivity(true)
+            goToQouteActivity()
         }
         mMainViewModel.authUserErrorObservable.subscribe {
             val toast = Toast.makeText(this, R.string.auth_user_failed, Toast.LENGTH_LONG)
@@ -68,9 +78,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToQouteActivity(isAuthenticated: Boolean) {
+    private fun goToQouteActivity() {
         val bundle = Bundle()
-        bundle.putBoolean(QouteActivity.Constants.AUTH, isAuthenticated)
+        bundle.putInt(QouteActivity.Constants.USERSTATE, userState)
         bundle.putInt(QouteActivity.Constants.NPER, term_SeekBar.progress)
         bundle.putInt(QouteActivity.Constants.PV, amount_SeekBar.progress)
         val intent = Intent(this, QouteActivity::class.java)
@@ -92,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         mAuthDialogView.application_btn.setOnClickListener {
             mAuthDialog.dismiss()
-            goToQouteActivity(false)
+            goToQouteActivity()
         }
 
 
@@ -105,9 +115,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GOOGLE_SIGN_IN) {
+        if (requestCode == GOOGLE_SIGN_IN && resultCode == Activity.RESULT_OK) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             val account = task.getResult(ApiException::class.java)
+            Logger.getLogger(MainActivity::class.java.name).warning("done")
             mMainViewModel.authenticateUser(account)
         }
     }
@@ -123,11 +134,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGoogleSignIn() {
-        mGoogleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+
+        mGoogleSignInOptions = GoogleSignInOptions.Builder(
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        ).requestIdToken(
+            getString(R.string.server_client_id)
+        ).requestEmail().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, mGoogleSignInOptions)
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMainViewModel.cancelNetworkConnections()
     }
 }
 

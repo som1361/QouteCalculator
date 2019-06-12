@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_qoute.*
 
 class QouteActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
-    private var isAuth: Boolean = false
+    private var userState: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
@@ -29,7 +29,9 @@ class QouteActivity : AppCompatActivity() {
         mMainViewModel.saveUserObservable.subscribe({
             hideProgressBar()
             val toast = Toast.makeText(this, R.string.app_success, Toast.LENGTH_LONG)
+            disableEditInfo()
             toast.view.setBackgroundColor(Color.GRAY)
+
             toast.show()
 //            val mBuilder = AlertDialog.Builder(this).setMessage("Your Application is successful.")
 //            mBuilder.show()
@@ -61,6 +63,10 @@ class QouteActivity : AppCompatActivity() {
         name_editText.setText(user.name)
         mobile_editText.setText(user.mobile)
         email_editText.setText(user.email)
+        disableEditInfo()
+    }
+
+    private fun disableEditInfo() {
         name_editText.isEnabled = false
         mobile_editText.isEnabled = false
         email_editText.isEnabled = false
@@ -76,10 +82,10 @@ class QouteActivity : AppCompatActivity() {
 
     private fun respondToClicks() {
         info_edit.setOnClickListener {
-            name_editText.isEnabled = true
-            mobile_editText.isEnabled = true
-            email_editText.isEnabled = true
+            enableEditInfo()
         }
+
+
 
         finance_details_edit.setOnClickListener {
             onBackPressed()
@@ -92,9 +98,17 @@ class QouteActivity : AppCompatActivity() {
                 name_editText.text.toString(),
                 mobile_editText.text.toString(), email_editText.text.toString()
             )
-            if (isAuth == false)
-                mMainViewModel.createUser(user)
+            when (userState){
+                Constants.NEW_USER -> mMainViewModel.createUser(user)
+                Constants.ANONYMOUS_USER -> mMainViewModel.saveUser(user)
+            }
         }
+    }
+
+    private fun enableEditInfo() {
+        name_editText.isEnabled = true
+        mobile_editText.isEnabled = true
+        email_editText.isEnabled = true
     }
 
     private fun loadView() {
@@ -102,8 +116,8 @@ class QouteActivity : AppCompatActivity() {
         val bundle = intent.extras
         val nper = bundle.getInt(Constants.NPER)
         val pv = bundle.getInt(Constants.PV)
-        isAuth = bundle.getBoolean(Constants.AUTH)
-        //  if (isAuth)
+        userState = bundle.getInt(Constants.USERSTATE)
+        if (userState != Constants.NEW_USER)
         getUserInfo()
         showPaymentDetails(nper, pv)
     }
@@ -128,9 +142,12 @@ class QouteActivity : AppCompatActivity() {
     }
 
     object Constants {
-        const val AUTH = "auth"
+        const val USERSTATE = "userstate"
         const val NPER = "nper"
         const val PV = "pv"
         const val RATE = 3.7
+        const val NEW_USER = 0
+        const val ANONYMOUS_USER = 1
+        const val AUTHENTICATED_USER = 2
     }
 }

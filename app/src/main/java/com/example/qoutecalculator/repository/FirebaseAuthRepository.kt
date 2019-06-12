@@ -26,6 +26,7 @@ class FirebaseAuthRepository : AuthRepository {
 
     private fun autheticateWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+        FirebaseAuth.getInstance()!!.currentUser!!.linkWithCredential(credential)
         FirebaseAuth.getInstance()!!.signInWithCredential(credential)
     }
 }
