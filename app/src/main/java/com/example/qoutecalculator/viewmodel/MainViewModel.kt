@@ -16,9 +16,11 @@ class MainViewModel() {
     private lateinit var userRepository: UserRepository
     private lateinit var authRepository: AuthRepository
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
-    lateinit var getUserObservable: PublishSubject<User>
-    lateinit var getUserErrorObservable: PublishSubject<Exception>
+    lateinit var getUserByIdObservable: PublishSubject<User>
+    lateinit var getUserByIdErrorObservable: PublishSubject<Exception>
     lateinit var saveUserObservable: CompletableSubject
+    lateinit var userExistObservable: PublishSubject<Boolean>
+    lateinit var userExistErrorObservable: PublishSubject<Exception>
     lateinit var saveUserErrorObservable: PublishSubject<Exception>
     lateinit var authUserObservable: CompletableSubject
     lateinit var authUserErrorObservable: PublishSubject<Exception>
@@ -28,8 +30,10 @@ class MainViewModel() {
         authUserErrorObservable = PublishSubject.create()
         authRepository = mAuthRepository
         userRepository = mUserRepository
-        getUserObservable = PublishSubject.create()
-        getUserErrorObservable = PublishSubject.create()
+        getUserByIdObservable = PublishSubject.create()
+        getUserByIdErrorObservable = PublishSubject.create()
+        userExistObservable = PublishSubject.create()
+        userExistErrorObservable = PublishSubject.create()
         saveUserObservable = CompletableSubject.create()
         saveUserErrorObservable = PublishSubject.create()
     }
@@ -66,17 +70,17 @@ class MainViewModel() {
         compositeDisposable.add(disposable)
     }
 
-    fun getUser() {
-        val disposable = userRepository.getUser()
+    fun getUserById() {
+        val disposable = userRepository.getUserById()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableSingleObserver<User>() {
                 override fun onError(e: Throwable) {
-                    getUserErrorObservable.onNext(e as Exception)
+                    getUserByIdErrorObservable.onNext(e as Exception)
                 }
 
                 override fun onSuccess(t: User) {
-                    getUserObservable.onNext(t)
+                    getUserByIdObservable.onNext(t)
                 }
             })
         compositeDisposable.add(disposable)
@@ -102,6 +106,22 @@ class MainViewModel() {
 
                 override fun onError(e: Throwable) {
                     authUserErrorObservable.onNext(e as Exception)
+                }
+            })
+        compositeDisposable.add(disposable)
+    }
+
+    fun checkIfUserExists(email: String) {
+        val disposable = userRepository.checkIfUserExists(email)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableSingleObserver<Boolean>() {
+                override fun onError(e: Throwable) {
+                    userExistErrorObservable.onNext(e as Exception)
+                }
+
+                override fun onSuccess(t: Boolean) {
+                    userExistObservable.onNext(t)
                 }
             })
         compositeDisposable.add(disposable)

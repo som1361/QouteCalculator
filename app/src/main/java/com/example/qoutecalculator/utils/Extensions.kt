@@ -1,14 +1,17 @@
 package com.example.qoutecalculator.utils
 
 import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
+import android.graphics.Color
 import android.util.Patterns
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import android.widget.Toast
 import com.example.qoutecalculator.model.User
 import com.google.firebase.database.DataSnapshot
+import android.app.Activity
+
+
 
 fun View.hideKeyboard(): Boolean {
     try {
@@ -19,4 +22,26 @@ fun View.hideKeyboard(): Boolean {
 }
 
 fun DataSnapshot.toUser(): User =
-    User(this.child("name")as String, this.child("mobile")as String, this.child("email")as String )
+    User(this.child("name")as String,
+        this.child("mobile")as String,
+        this.child("email")as String,
+        this.child("amount")as Int,
+        this.child("term")as Int )
+
+fun String.isValidEmail(): Boolean
+        = this.isNotEmpty() &&
+        Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
+fun showSuccessMessage(context:Context, message: Int){
+    val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
+    toast.view.setBackgroundColor(Color.GRAY)
+    toast.setGravity(Gravity.CENTER, 0, 0);
+    toast.show()
+}
+
+fun showFailMessage(context:Context, message: Int){
+    val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
+    toast.view.setBackgroundColor(Color.RED)
+    toast.setGravity(Gravity.CENTER, 0, 0);
+    toast.show()
+}

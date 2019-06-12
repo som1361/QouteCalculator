@@ -1,21 +1,26 @@
 package com.example.qoutecalculator.view
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
-import com.example.qoutecalculator.R
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
 import com.example.qoutecalculator.repository.FirebaseUserRepository
-import com.example.qoutecalculator.utils.hideKeyboard
+import com.example.qoutecalculator.utils.*
 import com.example.qoutecalculator.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_qoute.*
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import com.example.qoutecalculator.R
+
 
 class QouteActivity : AppCompatActivity() {
     private lateinit var mMainViewModel: MainViewModel
     private var userState: Int = 0
+    private var pv: Int = 0
+    private var nper: Int = 0
+    private lateinit var email: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
@@ -28,34 +33,48 @@ class QouteActivity : AppCompatActivity() {
     private fun listenToObservables() {
         mMainViewModel.saveUserObservable.subscribe({
             hideProgressBar()
-            val toast = Toast.makeText(this, R.string.app_success, Toast.LENGTH_LONG)
-            disableEditInfo()
-            toast.view.setBackgroundColor(Color.GRAY)
-
-            toast.show()
-//            val mBuilder = AlertDialog.Builder(this).setMessage("Your Application is successful.")
-//            mBuilder.show()
+            showSuccessMessage(this, R.string.app_success)
         })
 
         mMainViewModel.saveUserErrorObservable.subscribe({
             hideProgressBar()
-            val toast = Toast.makeText(this, R.string.app_failed, Toast.LENGTH_LONG)
-            toast.view.setBackgroundColor(Color.RED)
-            toast.show()
+            showFailMessage(this, R.string.app_failed)
         })
 
-        mMainViewModel.getUserObservable.subscribe({
+        mMainViewModel.getUserByIdObservable.subscribe({
             hideProgressBar()
             if (it != null) {
                 showUserInfo(it)
             }
         })
 
-        mMainViewModel.getUserErrorObservable.subscribe({
+        mMainViewModel.getUserByIdErrorObservable.subscribe({
             hideProgressBar()
-            val toast = Toast.makeText(this, R.string.get_user_failed, Toast.LENGTH_LONG)
-            toast.view.setBackgroundColor(Color.RED)
-            toast.show()
+            showFailMessage(this, R.string.get_user_failed)
+        })
+
+        mMainViewModel.userExistObservable.subscribe({
+            if (it == true && email != email_editText.text.toString()) {
+                hideProgressBar()
+                showFailMessage(this, R.string.email_exist_error)
+            }
+            else {
+                val user = User(
+                    name_editText.text.toString(),
+                    mobile_editText.text.toString(), email_editText.text.toString()
+                    , pv, nper
+                )
+
+                when (userState) {
+                    Constants.NEW_USER -> mMainViewModel.createUser(user)
+                    Constants.ANONYMOUS_USER -> mMainViewModel.saveUser(user)
+                }
+            }
+        })
+
+        mMainViewModel.userExistErrorObservable.subscribe({
+            hideProgressBar()
+            showFailMessage(this, R.string.check_email_failed)
         })
     }
 
@@ -63,6 +82,7 @@ class QouteActivity : AppCompatActivity() {
         name_editText.setText(user.name)
         mobile_editText.setText(user.mobile)
         email_editText.setText(user.email)
+        email = user.email!!
         disableEditInfo()
     }
 
@@ -85,6 +105,14 @@ class QouteActivity : AppCompatActivity() {
             enableEditInfo()
         }
 
+qoute_layout.setOnTouchListener(object: View.OnTouchListener {
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        return true
+    }
+})
+
 
 
         finance_details_edit.setOnClickListener {
@@ -93,17 +121,13 @@ class QouteActivity : AppCompatActivity() {
 
         apply_btn.setOnClickListener {
             mobile_editText.hideKeyboard()
-            showProgressBar()
-            val user = User(
-                name_editText.text.toString(),
-                mobile_editText.text.toString(), email_editText.text.toString()
-            )
-            when (userState){
-                Constants.NEW_USER -> mMainViewModel.createUser(user)
-                Constants.ANONYMOUS_USER -> mMainViewModel.saveUser(user)
-            }
+            if (!isFormValid())
+                showFailMessage(this, com.example.qoutecalculator.R.string.invalid_form)
+            else mMainViewModel.checkIfUserExists(email_editText.text.toString())
         }
     }
+
+    private fun isFormValid() = email_editText.text.toString().isValidEmail()
 
     private fun enableEditInfo() {
         name_editText.isEnabled = true
@@ -114,17 +138,19 @@ class QouteActivity : AppCompatActivity() {
     private fun loadView() {
         setContentView(R.layout.activity_qoute)
         val bundle = intent.extras
-        val nper = bundle.getInt(Constants.NPER)
-        val pv = bundle.getInt(Constants.PV)
+        nper = bundle.getInt(Constants.NPER)
+        pv = bundle.getInt(Constants.PV)
         userState = bundle.getInt(Constants.USERSTATE)
         if (userState != Constants.NEW_USER)
-        getUserInfo()
+            getUserInfo()
+        else
+            disableEditInfo()
         showPaymentDetails(nper, pv)
     }
 
     private fun getUserInfo() {
         showProgressBar()
-        mMainViewModel.getUser()
+        mMainViewModel.getUserById()
     }
 
     private fun showPaymentDetails(nper: Int, pv: Int) {
@@ -133,7 +159,8 @@ class QouteActivity : AppCompatActivity() {
         repayment_textview.text = mMainViewModel.calculatePayment(
             pv.toDouble(),
             nper.toDouble(),
-        Constants.RATE)
+            Constants.RATE
+        )
     }
 
     override fun onStop() {

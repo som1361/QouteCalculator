@@ -9,7 +9,7 @@ import io.reactivex.Single
 
 class FirebaseAuthRepository : AuthRepository {
 
-    override fun <T> authenticate(account: T): Single<User> = Single.create{ emitter ->
+    override fun <T> authenticate(account: T): Single<User> = Single.create { emitter ->
         if (account is GoogleSignInAccount)
             autheticateWithGoogle(account)
     }
@@ -31,5 +31,12 @@ class FirebaseAuthRepository : AuthRepository {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         currUser!!.linkWithCredential(credential)
         FirebaseAuth.getInstance()!!.signInWithCredential(credential)
-        return User(currUser.displayName, currUser.phoneNumber, currUser.email)    }
+
+        val user = User()
+        user.email = currUser.email
+        user.mobile = currUser.phoneNumber
+        user.name = currUser.displayName
+
+        return user
+    }
 }

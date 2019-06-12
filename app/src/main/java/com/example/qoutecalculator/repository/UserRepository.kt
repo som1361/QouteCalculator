@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 interface UserRepository {
-    fun getUser(): Single<User>
+    fun getUserById(): Single<User>
     fun saveUser(user: User): Completable
+    fun checkIfUserExists(email: String): Single<Boolean>
 }

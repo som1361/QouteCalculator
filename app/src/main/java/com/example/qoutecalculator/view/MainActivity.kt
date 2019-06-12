@@ -1,16 +1,17 @@
 package com.example.qoutecalculator.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
-import android.widget.Toast
 import com.example.qoutecalculator.R
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
 import com.example.qoutecalculator.repository.FirebaseUserRepository
+import com.example.qoutecalculator.utils.showFailMessage
+import com.example.qoutecalculator.utils.showSuccessMessage
 import com.example.qoutecalculator.viewmodel.MainViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -55,7 +56,8 @@ class MainActivity : AppCompatActivity() {
             currentUser.let {
                 if (it == null || it!!.isAnonymous) {
                     if (it == null) userState = QouteActivity.Constants.NEW_USER
-                    else userState = QouteActivity.Constants.ANONYMOUS_USER
+                    else {userState = QouteActivity.Constants.ANONYMOUS_USER
+                    }
                     calcQouteButton.setText(R.string.apply_now)
                     showAuthenticationDialog()
                 } else {
@@ -66,16 +68,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun listenToObservables() {
         mMainViewModel.authUserObservable.subscribe {
             userState = QouteActivity.Constants.AUTHENTICATED_USER
             goToQouteActivity()
         }
-        mMainViewModel.authUserErrorObservable.subscribe {
-            val toast = Toast.makeText(this, R.string.auth_user_failed, Toast.LENGTH_LONG)
-            toast.view.setBackgroundColor(Color.RED)
-            toast.show()
-        }
+        mMainViewModel.authUserErrorObservable.subscribe( {
+            showFailMessage(this, R.string.auth_user_failed)
+        })
 
         mMainViewModel.saveUserObservable.subscribe({
             userState = QouteActivity.Constants.AUTHENTICATED_USER
@@ -83,9 +84,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         mMainViewModel.saveUserErrorObservable.subscribe({
-            val toast = Toast.makeText(this, R.string.save_auth_user_failed, Toast.LENGTH_LONG)
-            toast.view.setBackgroundColor(Color.RED)
-            toast.show()
+            showSuccessMessage(this,R.string.save_auth_user_failed)
         })
 
 

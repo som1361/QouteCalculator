@@ -14,7 +14,7 @@ class FirebaseUserRepository : UserRepository {
     private val db: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    override fun getUser(): Single<User> = Single.create { emitter ->
+    override fun getUserById(): Single<User> = Single.create { emitter ->
         val dbRef = userDatabaseReference()
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -28,11 +28,26 @@ class FirebaseUserRepository : UserRepository {
         })
     }
 
+    override fun checkIfUserExists(email: String): Single<Boolean> = Single.create { emitter ->
+        db.getReference("users").orderByChild("email")
+            .equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    emitter.onSuccess(snapshot.getValue() != null)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Failed to read value
+                }
+            })
+    }
+
     override fun saveUser(user: User): Completable = Completable.fromCallable {
         val dbRef = userDatabaseReference()
         dbRef.child("name").setValue(user.name)
         dbRef.child("mobile").setValue(user.mobile)
         dbRef.child("email").setValue(user.email)
+        dbRef.child("amount").setValue(user.amount)
+        dbRef.child("term").setValue(user.term)
     }
 
     private fun userDatabaseReference() = db.getReference("users").child(auth.currentUser?.uid!!)
