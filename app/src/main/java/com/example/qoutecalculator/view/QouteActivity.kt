@@ -62,7 +62,7 @@ class QouteActivity : AppCompatActivity() {
                 val user = User(
                     name_editText.text.toString(),
                     mobile_editText.text.toString(), email_editText.text.toString()
-                    , pv, nper
+                    , pv, nper, userState
                 )
 
                 when (userState) {
@@ -141,10 +141,14 @@ qoute_layout.setOnTouchListener(object: View.OnTouchListener {
         nper = bundle.getInt(Constants.NPER)
         pv = bundle.getInt(Constants.PV)
         userState = bundle.getInt(Constants.USERSTATE)
-        if (userState != Constants.NEW_USER)
-            getUserInfo()
-        else
+        if (userState == Constants.NEW_USER)
             disableEditInfo()
+        else {
+            getUserInfo()
+            if (userState ==Constants.AUTHENTICATED_USER )
+                info_edit.visibility = View.INVISIBLE
+        }
+
         showPaymentDetails(nper, pv)
     }
 

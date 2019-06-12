@@ -48,6 +48,7 @@ class FirebaseUserRepository : UserRepository {
         dbRef.child("email").setValue(user.email)
         dbRef.child("amount").setValue(user.amount)
         dbRef.child("term").setValue(user.term)
+        dbRef.child("type").setValue(user.type)
     }
 
     private fun userDatabaseReference() = db.getReference("users").child(auth.currentUser?.uid!!)

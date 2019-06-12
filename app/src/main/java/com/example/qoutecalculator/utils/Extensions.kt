@@ -26,7 +26,8 @@ fun DataSnapshot.toUser(): User =
         this.child("mobile")as String,
         this.child("email")as String,
         this.child("amount")as Int,
-        this.child("term")as Int )
+        this.child("term")as Int,
+        this.child("type")as Int)
 
 fun String.isValidEmail(): Boolean
         = this.isNotEmpty() &&
