@@ -99,9 +99,9 @@ class MainViewModel() {
         val disposable = authRepository.authenticate(account)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<User>() {
-                override fun onSuccess(user: User) {
-                    saveUser(user)
+            .subscribeWith(object : DisposableCompletableObserver() {
+                override fun onComplete() {
+                    authUserObservable.onComplete()
                 }
 
                 override fun onError(e: Throwable) {

@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.view.View
 import com.example.qoutecalculator.R
+import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
 import com.example.qoutecalculator.repository.FirebaseUserRepository
 import com.example.qoutecalculator.utils.showFailMessage
@@ -23,6 +25,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_qoute.*
 import kotlinx.android.synthetic.main.authentication_dialog.view.*
 
 class MainActivity : AppCompatActivity() {
@@ -56,11 +59,13 @@ class MainActivity : AppCompatActivity() {
             currentUser.let {
                 if (it == null || it!!.isAnonymous) {
                     if (it == null) userState = QouteActivity.Constants.NEW_USER
-                    else {userState = QouteActivity.Constants.ANONYMOUS_USER
+                    else {
+                        userState = QouteActivity.Constants.ANONYMOUS_USER
                     }
                     calcQouteButton.setText(R.string.apply_now)
                     showAuthenticationDialog()
                 } else {
+                    hideProgressBar()
                     userState = QouteActivity.Constants.AUTHENTICATED_USER
                     goToQouteActivity()
                 }
@@ -71,20 +76,43 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("CheckResult")
     private fun listenToObservables() {
         mMainViewModel.authUserObservable.subscribe {
-            userState = QouteActivity.Constants.AUTHENTICATED_USER
-            goToQouteActivity()
+            showProgressBar()
+            currentUser = mAuth?.currentUser
+            mMainViewModel.checkIfUserExists(currentUser?.email!!)
+
         }
-        mMainViewModel.authUserErrorObservable.subscribe( {
+        mMainViewModel.authUserErrorObservable.subscribe({
             showFailMessage(this, R.string.auth_user_failed)
         })
 
         mMainViewModel.saveUserObservable.subscribe({
             userState = QouteActivity.Constants.AUTHENTICATED_USER
+            hideProgressBar()
             goToQouteActivity()
         })
 
         mMainViewModel.saveUserErrorObservable.subscribe({
-            showSuccessMessage(this,R.string.save_auth_user_failed)
+            showSuccessMessage(this, R.string.save_auth_user_failed)
+        })
+
+        mMainViewModel.userExistObservable.subscribe {
+            userState = QouteActivity.Constants.AUTHENTICATED_USER
+            if (it == false) {
+                val user = User()
+                user.name = currentUser?.displayName!!
+                user.mobile = currentUser?.phoneNumber?:null
+                user.email = currentUser?.email!!
+                user.type = userState
+                user.amount = amount_SeekBar.progress
+                user.term = term_SeekBar.progress
+                mMainViewModel.saveUser(user)
+            } else {
+                goToQouteActivity()
+            }
+        }
+
+        mMainViewModel.userExistErrorObservable.subscribe({
+            showFailMessage(this, R.string.check_email_failed)
         })
 
 
@@ -158,6 +186,14 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mMainViewModel.cancelNetworkConnections()
+    }
+
+    fun showProgressBar() {
+        main_activity_progress_bar.visibility = View.VISIBLE
+    }
+
+    fun hideProgressBar() {
+        main_activity_progress_bar.visibility = View.GONE
     }
 }
 

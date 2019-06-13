@@ -23,7 +23,7 @@ class FirebaseUserRepository : UserRepository {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
+                emitter.onError(error as Exception)
             }
         })
     }
@@ -36,7 +36,7 @@ class FirebaseUserRepository : UserRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Failed to read value
+                    emitter.onError(error as Exception)
                 }
             })
     }

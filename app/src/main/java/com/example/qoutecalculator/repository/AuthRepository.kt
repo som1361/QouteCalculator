@@ -7,5 +7,5 @@ import io.reactivex.Single
 interface AuthRepository {
     fun isAuthenticated(): Boolean
     fun login(): Completable
-    fun <T> authenticate(t: T): Single<User>
+    fun <T> authenticate(t: T): Completable
 }

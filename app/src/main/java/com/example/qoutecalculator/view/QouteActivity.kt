@@ -20,7 +20,7 @@ class QouteActivity : AppCompatActivity() {
     private var userState: Int = 0
     private var pv: Int = 0
     private var nper: Int = 0
-    private lateinit var email: String
+    private var email: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
