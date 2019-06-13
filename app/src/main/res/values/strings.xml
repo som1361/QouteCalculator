@@ -6,4 +6,8 @@
     <string name="app_failed">Your Application is failed.</string>
     <string name="get_user_failed">Error in reading user data</string>
     <string name="auth_user_failed">User authentication failed.</string>
+    <string name="save_auth_user_failed">saving authenticated user is failed.</string>
+    <string name="invalid_form">please enter a valid email.</string>
+    <string name="check_email_failed">email checking failed.</string>
+    <string name="email_exist_error">email already exists.</string>
 </resources>

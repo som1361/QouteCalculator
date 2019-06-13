@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import com.example.qoutecalculator.BuildConfig
 import com.example.qoutecalculator.R
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
@@ -25,7 +26,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_qoute.*
 import kotlinx.android.synthetic.main.authentication_dialog.view.*
 
 class MainActivity : AppCompatActivity() {
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             if (it == false) {
                 val user = User()
                 user.name = currentUser?.displayName!!
-                user.mobile = currentUser?.phoneNumber?:null
+                user.mobile = currentUser?.phoneNumber ?: null
                 user.email = currentUser?.email!!
                 user.type = userState
                 user.amount = amount_SeekBar.progress
@@ -176,9 +176,8 @@ class MainActivity : AppCompatActivity() {
 
         mGoogleSignInOptions = GoogleSignInOptions.Builder(
             GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken(
-            getString(R.string.server_client_id)
-        ).requestEmail().build()
+        ).requestIdToken(BuildConfig.FBclientId)
+            .requestEmail().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, mGoogleSignInOptions)
 
     }

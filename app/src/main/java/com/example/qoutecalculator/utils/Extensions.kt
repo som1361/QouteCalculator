@@ -9,9 +9,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.qoutecalculator.model.User
 import com.google.firebase.database.DataSnapshot
-import android.app.Activity
-
-
 
 fun View.hideKeyboard(): Boolean {
     try {
