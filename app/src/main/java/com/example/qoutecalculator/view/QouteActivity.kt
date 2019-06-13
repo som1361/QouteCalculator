@@ -67,7 +67,7 @@ class QouteActivity : AppCompatActivity() {
 
                 when (userState) {
                     Constants.NEW_USER -> mMainViewModel.createUser(user)
-                    Constants.ANONYMOUS_USER -> mMainViewModel.saveUser(user)
+                    else -> mMainViewModel.saveUser(user)
                 }
             }
         })
@@ -120,7 +120,6 @@ qoute_layout.setOnTouchListener(object: View.OnTouchListener {
         }
 
         apply_btn.setOnClickListener {
-            mobile_editText.hideKeyboard()
             if (!isFormValid())
                 showFailMessage(this, com.example.qoutecalculator.R.string.invalid_form)
             else mMainViewModel.checkIfUserExists(email_editText.text.toString())
