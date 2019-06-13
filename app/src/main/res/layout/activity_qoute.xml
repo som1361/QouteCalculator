@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        android:id="@+id/qoute_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        tools:context=".view.QouteActivity">
+
+
+    <TextView
+            android:text="Your qoute"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/qoute_lable" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.508" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp" app:layout_constraintTop_toTopOf="parent" android:textSize="18sp"/>
+    <TextView
+            android:text="Your information"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/info_lable" app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/qoute_lable" android:layout_marginTop="32dp"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="Edit"
+            android:textColor="#000000"
+            android:background="?attr/selectableItemBackground"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/info_edit"
+            app:layout_constraintBaseline_toBaselineOf="@+id/info_lable"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4" android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp" android:clickable="true" android:textSize="18sp"/>
+    <TextView
+            android:text="Name"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/name_lable"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp" android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/info_lable" android:layout_marginTop="24dp"
+            android:textSize="18sp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:textColor="#000000"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/name_editText"
+            app:layout_constraintBaseline_toBaselineOf="@+id/name_lable" android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4" android:layout_marginRight="16dp"
+            android:gravity="right" android:textSize="18sp"/>
+    <TextView
+            android:text="Mobile"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mobile_lable"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp" android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/name_lable" android:layout_marginTop="24dp"
+            android:textSize="18sp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:textColor="#000000"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/mobile_editText"
+            app:layout_constraintBaseline_toBaselineOf="@+id/mobile_lable" android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4" android:layout_marginRight="16dp"
+            android:gravity="right" android:textSize="18sp"/>
+    <TextView
+            android:text="Email"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/email_lable"
+            app:layout_constraintStart_toStartOf="@+id/guideline2" android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp" android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/mobile_lable" android:layout_marginTop="24dp"
+            android:textSize="18sp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:textColor="#000000"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/email_editText"
+            app:layout_constraintBaseline_toBaselineOf="@+id/email_lable" android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4" android:layout_marginRight="16dp"
+            android:gravity="right" android:textSize="18sp"/>
+    <TextView
+            android:text="Finance Details"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/finance_details_lable" app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/email_lable" android:layout_marginTop="56dp"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="Edit"
+            android:background="?attr/selectableItemBackground"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/finance_details_edit" app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/finance_details_lable" android:clickable="true"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="Finance amount"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/amount_lable"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp" android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/finance_details_lable" android:layout_marginTop="24dp"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="$5000"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/amount_textview"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/amount_lable" android:gravity="right"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="over 24 months"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/term_textview"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/amount_textview" android:layout_marginTop="8dp"
+            android:gravity="right" android:textSize="18sp"/>
+    <TextView
+            android:text="Repayment from"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repayment_lable"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp" android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/term_textview" android:layout_marginTop="24dp"
+            android:textSize="18sp"/>
+    <TextView
+            android:text="$56.12"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repayment_textview"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/repayment_lable" android:gravity="right"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:text="Weekly"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/frequency_textview"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            android:layout_marginEnd="16dp" android:layout_marginRight="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/repayment_textview" android:layout_marginTop="8dp"
+            android:gravity="right"
+            android:textSize="18sp"/>
+    <Button
+            android:text="Apply Now"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/apply_btn"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp" app:layout_constraintTop_toBottomOf="@+id/frequency_textview"
+            android:layout_marginBottom="32dp" app:layout_constraintBottom_toBottomOf="parent" android:textSize="18sp"/>
+
+    <ProgressBar
+            android:id="@+id/qoute_activity_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline2" app:layout_constraintGuide_begin="20dp"
+                                          android:orientation="vertical"/>
+    <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                          android:id="@+id/guideline4"
+                                          android:orientation="vertical" app:layout_constraintGuide_end="16dp"/>
+
+</android.support.constraint.ConstraintLayout>
