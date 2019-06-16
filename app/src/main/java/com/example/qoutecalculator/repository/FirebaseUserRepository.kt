@@ -10,9 +10,8 @@ import io.reactivex.Completable
 import io.reactivex.Single
 
 
-class FirebaseUserRepository : UserRepository {
-    private val db: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+class FirebaseUserRepository (private val db: FirebaseDatabase = FirebaseDatabase.getInstance(),
+                              private val auth: FirebaseAuth = FirebaseAuth.getInstance()) : UserRepository {
 
     override fun getUserById(): Single<User> = Single.create { emitter ->
         val dbRef = userDatabaseReference()
@@ -23,19 +22,21 @@ class FirebaseUserRepository : UserRepository {
             }
 
             override fun onCancelled(error: DatabaseError) {
+                dbRef.removeEventListener(this)
                 emitter.onError(error as Exception)
             }
         })
     }
 
     override fun checkIfUserExists(email: String): Single<Boolean> = Single.create { emitter ->
-        db.getReference("users").orderByChild("email")
-            .equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener {
+        val dbRef = db.getReference("users").orderByChild("email").equalTo(email)
+            dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     emitter.onSuccess(snapshot.getValue() != null)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    dbRef.removeEventListener(this)
                     emitter.onError(error as Exception)
                 }
             })

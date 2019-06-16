@@ -2,6 +2,7 @@ package com.example.qoutecalculator.utils
 
 import android.content.Context
 import android.graphics.Color
+import android.support.v4.util.PatternsCompat
 import android.util.Patterns
 import android.view.Gravity
 import android.view.View
@@ -28,7 +29,7 @@ fun DataSnapshot.toUser(): User =
 
 fun String.isValidEmail(): Boolean
         = this.isNotEmpty() &&
-        Patterns.EMAIL_ADDRESS.matcher(this).matches()
+        PatternsCompat.EMAIL_ADDRESS.matcher(this).matches()
 
 fun showSuccessMessage(context:Context, message: Int){
     val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
