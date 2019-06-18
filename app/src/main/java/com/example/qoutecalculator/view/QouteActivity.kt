@@ -13,17 +13,20 @@ import kotlinx.android.synthetic.main.activity_qoute.*
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import com.example.qoutecalculator.R
+import com.example.qoutecalculator.application.QouteApplication
+import javax.inject.Inject
 
 
 class QouteActivity : AppCompatActivity() {
-    private lateinit var mMainViewModel: MainViewModel
+    @Inject lateinit var mMainViewModel: MainViewModel
     private var userState: Int = 0
     private var pv: Int = 0
     private var nper: Int = 0
     private var email: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
+        (application as QouteApplication).qouteComponent.inject(this)
+      //  mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
         super.onCreate(savedInstanceState)
         loadView()
         respondToClicks()

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import com.example.qoutecalculator.BuildConfig
 import com.example.qoutecalculator.R
+import com.example.qoutecalculator.application.QouteApplication
 import com.example.qoutecalculator.model.User
 import com.example.qoutecalculator.repository.FirebaseAuthRepository
 import com.example.qoutecalculator.repository.FirebaseUserRepository
@@ -27,10 +28,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.authentication_dialog.view.*
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     private var userState: Int = 0
-    private lateinit var mMainViewModel: MainViewModel
+    @Inject lateinit var mMainViewModel: MainViewModel
     private var mAuth: FirebaseAuth? = null
     private var currentUser: FirebaseUser? = null
 
@@ -39,7 +41,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var mGoogleSignInOptions: GoogleSignInOptions
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
+        (application as QouteApplication).qouteComponent.inject(this)
+        // mMainViewModel = MainViewModel(FirebaseAuthRepository(), FirebaseUserRepository())
 
         FirebaseApp.initializeApp(this)
         super.onCreate(savedInstanceState)
